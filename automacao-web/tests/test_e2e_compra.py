@@ -23,20 +23,22 @@ class TestE2ECompra:
 
         login_page.abrir()
         login_page.fazer_login("standard_user", "secret_sauce")
+        time.sleep(1) 
         assert "inventory" in driver.current_url
 
         inventory_page.adicionar_produto_ao_carrinho()
         inventory_page.ir_para_carrinho()
+        time.sleep(1) 
         assert "cart" in driver.current_url
 
         cart_page.ir_para_checkout()
+        time.sleep(1) 
         assert "checkout-step-one" in driver.current_url
 
         checkout_page.preencher_dados("Joao", "Silva", "12345")
-
+        
         # Tava dando um problema com sincronismo aqui, essa pause resolveu, mas ideal seria usar WebDriverWait
-        time.sleep(2)
-
+        time.sleep(2) 
         assert "checkout-step-two" in driver.current_url
 
         checkout_page.finalizar_compra()
