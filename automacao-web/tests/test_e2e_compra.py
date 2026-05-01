@@ -1,5 +1,6 @@
-import time
 import pytest
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from utils.driver import criar_driver
 from pages.login_page import LoginPage
 from pages.inventory_page import InventoryPage
@@ -21,31 +22,24 @@ class TestE2ECompra:
         cart_page = CartPage(driver)
         checkout_page = CheckoutPage(driver)
 
+        # Criamos o nosso vigia inteligente com tolerância máxima de 10s
+        wait = WebDriverWait(driver, 10)
+
         login_page.abrir()
         login_page.fazer_login("standard_user", "secret_sauce")
-        time.sleep(2) 
-        assert "inventory" in driver.current_url
+        # O teste só avança quando a URL tiver 'inventory'
+        wait.until(EC.url_contains("inventory"))
 
         inventory_page.adicionar_produto_ao_carrinho()
-        
-        
-        time.sleep(1) 
-        
         inventory_page.ir_para_carrinho()
-        
-        
-        time.sleep(3) 
-        assert "cart" in driver.current_url
+        # Vigia do carrinho (onde estava o gargalo!)
+        wait.until(EC.url_contains("cart"))
 
         cart_page.ir_para_checkout()
-        time.sleep(2) 
-        assert "checkout-step-one" in driver.current_url
+        wait.until(EC.url_contains("checkout-step-one"))
 
         checkout_page.preencher_dados("Joao", "Silva", "12345")
-        
-        time.sleep(3) 
-        assert "checkout-step-two" in driver.current_url
+        wait.until(EC.url_contains("checkout-step-two"))
 
         checkout_page.finalizar_compra()
-        time.sleep(2) # Pausa final antes de ler a mensagem de sucesso
         assert checkout_page.obter_mensagem_confirmacao() == "Thank you for your order!"
