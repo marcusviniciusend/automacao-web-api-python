@@ -1,3 +1,4 @@
+import time
 import pytest
 from utils.driver import criar_driver
 from pages.login_page import LoginPage
@@ -32,6 +33,10 @@ class TestE2ECompra:
         assert "checkout-step-one" in driver.current_url
 
         checkout_page.preencher_dados("Joao", "Silva", "12345")
+
+        # Tava dando um problema com sincronismo aqui, essa pause resolveu, mas ideal seria usar WebDriverWait
+        time.sleep(2)
+
         assert "checkout-step-two" in driver.current_url
 
         checkout_page.finalizar_compra()
