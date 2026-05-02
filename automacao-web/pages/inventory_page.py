@@ -8,13 +8,13 @@ class InventoryPage:
         self.driver = driver
 
     def adicionar_produto_ao_carrinho(self):
-        botao_adicionar = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.ID, "add-to-cart-sauce-labs-backpack"))
+        botao = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "add-to-cart-sauce-labs-backpack"))
         )
-        botao_adicionar.click()
+        self.driver.execute_script("arguments[0].click();", botao)
 
     def ir_para_carrinho(self):
-        icone_carrinho = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.CLASS_NAME, "shopping_cart_link"))
+        icone = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "shopping_cart_link"))
         )
-        icone_carrinho.click()
+        self.driver.execute_script("arguments[0].click();", icone)

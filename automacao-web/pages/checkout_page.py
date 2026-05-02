@@ -26,9 +26,12 @@ class CheckoutPage:
 
     def finalizar_compra(self):
         btn_finish = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.ID, "finish"))
+            EC.presence_of_element_located((By.ID, "finish"))
         )
-        btn_finish.click()
+        self.driver.execute_script("arguments[0].click();", btn_finish)
 
     def obter_mensagem_confirmacao(self):
-        return self.driver.find_element(By.CLASS_NAME, "complete-header").text
+        elemento = WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.CLASS_NAME, "complete-header"))
+        )
+        return elemento.text

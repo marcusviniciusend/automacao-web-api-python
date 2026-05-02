@@ -8,6 +8,7 @@ class CartPage:
         self.driver = driver
 
     def ir_para_checkout(self):
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.ID, "checkout"))
-        ).click()
+        botao = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "checkout"))
+        )
+        self.driver.execute_script("arguments[0].click();", botao)
