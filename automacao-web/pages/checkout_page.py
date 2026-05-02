@@ -2,33 +2,41 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+_SET_REACT_VALUE = """
+    var setter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype, 'value'
+    ).set;
+    setter.call(arguments[0], arguments[1]);
+    arguments[0].dispatchEvent(new Event('input', { bubbles: true }));
+    arguments[0].dispatchEvent(new Event('change', { bubbles: true }));
+"""
+
 
 class CheckoutPage:
     def __init__(self, driver):
         self.driver = driver
 
+    def _preencher_campo(self, element_id, value):
+        elemento = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, element_id))
+        )
+        self.driver.execute_script(_SET_REACT_VALUE, elemento, value)
+
     def preencher_dados(self, nome, sobrenome, cep):
-        wait = WebDriverWait(self.driver, 10)
+        self._preencher_campo("first-name", nome)
+        self._preencher_campo("last-name", sobrenome)
+        self._preencher_campo("postal-code", cep)
 
-        campo_nome = wait.until(EC.element_to_be_clickable((By.ID, "first-name")))
-        campo_nome.click()
-        campo_nome.send_keys(nome)
-
-        campo_sobrenome = wait.until(EC.element_to_be_clickable((By.ID, "last-name")))
-        campo_sobrenome.click()
-        campo_sobrenome.send_keys(sobrenome)
-
-        campo_cep = wait.until(EC.element_to_be_clickable((By.ID, "postal-code")))
-        campo_cep.click()
-        campo_cep.send_keys(cep)
-
-        wait.until(EC.element_to_be_clickable((By.ID, "continue"))).click()
+        btn = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "continue"))
+        )
+        self.driver.execute_script("arguments[0].click();", btn)
 
     def finalizar_compra(self):
-        btn_finish = WebDriverWait(self.driver, 10).until(
+        btn = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, "finish"))
         )
-        self.driver.execute_script("arguments[0].click();", btn_finish)
+        self.driver.execute_script("arguments[0].click();", btn)
 
     def obter_mensagem_confirmacao(self):
         elemento = WebDriverWait(self.driver, 10).until(
