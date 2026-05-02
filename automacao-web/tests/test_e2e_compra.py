@@ -22,24 +22,27 @@ class TestE2ECompra:
         cart_page = CartPage(driver)
         checkout_page = CheckoutPage(driver)
 
-        # Agora é 20 pra ver se resolve AAAAAAAAAAAAA
-        wait = WebDriverWait(driver, 20)
+        # Aumentamos para 40 segundos. É tempo de sobra para qualquer conexão.
+        wait = WebDriverWait(driver, 40)
 
         login_page.abrir()
         login_page.fazer_login("standard_user", "secret_sauce")
-        # O teste só avança quando a URL tiver 'inventory'
         wait.until(EC.url_contains("inventory"))
 
         inventory_page.adicionar_produto_ao_carrinho()
         inventory_page.ir_para_carrinho()
-        # Vigia do carrinho (onde estava o gargalo!)
+
         wait.until(EC.url_contains("cart"))
 
         cart_page.ir_para_checkout()
         wait.until(EC.url_contains("checkout-step-one"))
 
         checkout_page.preencher_dados("Joao", "Silva", "12345")
+
         wait.until(EC.url_contains("checkout-step-two"))
 
         checkout_page.finalizar_compra()
+
+        # Espera o elemento de sucesso aparecer fisicamente
+        wait.until(EC.url_contains("checkout-complete"))
         assert checkout_page.obter_mensagem_confirmacao() == "Thank you for your order!"

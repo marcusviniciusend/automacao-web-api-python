@@ -1,4 +1,6 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class CheckoutPage:
@@ -6,18 +8,27 @@ class CheckoutPage:
         self.driver = driver
 
     def preencher_dados(self, nome, sobrenome, cep):
-        self.driver.find_element(By.ID, "first-name").send_keys(nome)
-        self.driver.find_element(By.ID, "last-name").send_keys(sobrenome)
-        self.driver.find_element(By.ID, "postal-code").send_keys(cep)
+        wait = WebDriverWait(self.driver, 10)
 
-        # Clique forçado via JavaScript para evitar que a Pipeline ignore a transição
-        btn_continuar = self.driver.find_element(By.ID, "continue")
-        self.driver.execute_script("arguments[0].click();", btn_continuar)
+        campo_nome = wait.until(EC.element_to_be_clickable((By.ID, "first-name")))
+        campo_nome.click()
+        campo_nome.send_keys(nome)
+
+        campo_sobrenome = wait.until(EC.element_to_be_clickable((By.ID, "last-name")))
+        campo_sobrenome.click()
+        campo_sobrenome.send_keys(sobrenome)
+
+        campo_cep = wait.until(EC.element_to_be_clickable((By.ID, "postal-code")))
+        campo_cep.click()
+        campo_cep.send_keys(cep)
+
+        wait.until(EC.element_to_be_clickable((By.ID, "continue"))).click()
 
     def finalizar_compra(self):
-        # Também vamos forçar o clique no Finish para não ter erro no último passo
-        btn_finish = self.driver.find_element(By.ID, "finish")
-        self.driver.execute_script("arguments[0].click();", btn_finish)
+        btn_finish = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "finish"))
+        )
+        btn_finish.click()
 
     def obter_mensagem_confirmacao(self):
         return self.driver.find_element(By.CLASS_NAME, "complete-header").text
