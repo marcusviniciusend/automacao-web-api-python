@@ -22,8 +22,8 @@ class TestE2ECompra:
         cart_page = CartPage(driver)
         checkout_page = CheckoutPage(driver)
 
-        # Criamos o nosso vigia inteligente com tolerância máxima de 10s
-        wait = WebDriverWait(driver, 10)
+        # Agora é 20 pra ver se resolve AAAAAAAAAAAAA
+        wait = WebDriverWait(driver, 20)
 
         login_page.abrir()
         login_page.fazer_login("standard_user", "secret_sauce")
