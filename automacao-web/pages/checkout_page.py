@@ -40,6 +40,7 @@ class CheckoutPage:
 
     def obter_mensagem_confirmacao(self):
         elemento = WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located((By.CLASS_NAME, "complete-header"))
+            EC.visibility_of_element_located(
+                (By.CLASS_NAME, "complete-header"))
         )
         return elemento.text
