@@ -32,6 +32,18 @@ class CheckoutPage:
         )
         self.driver.execute_script("arguments[0].click();", btn)
 
+    def clicar_continuar_sem_dados(self):
+        btn = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, "continue"))
+        )
+        self.driver.execute_script("arguments[0].click();", btn)
+
+    def obter_erro_formulario(self):
+        elemento = WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located((By.CSS_SELECTOR, "[data-test='error']"))
+        )
+        return elemento.text
+
     def finalizar_compra(self):
         btn = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, "finish"))

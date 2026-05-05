@@ -15,6 +15,26 @@ def driver():
     driver.quit()
 
 
+class TestLogin:
+    def test_login_usuario_invalido(self, driver):
+        login_page = LoginPage(driver)
+
+        login_page.abrir()
+        login_page.fazer_login("usuario_invalido", "senha_errada")
+
+        mensagem = login_page.obter_mensagem_erro()
+        assert "Username and password do not match" in mensagem
+
+    def test_login_usuario_bloqueado(self, driver):
+        login_page = LoginPage(driver)
+
+        login_page.abrir()
+        login_page.fazer_login("locked_out_user", "secret_sauce")
+
+        mensagem = login_page.obter_mensagem_erro()
+        assert "Sorry, this user has been locked out" in mensagem
+
+
 class TestE2ECompra:
     def test_fluxo_completo_de_compra(self, driver):
         login_page = LoginPage(driver)
@@ -46,3 +66,28 @@ class TestE2ECompra:
         # Espera o elemento de sucesso aparecer fisicamente
         wait.until(EC.url_contains("checkout-complete"))
         assert checkout_page.obter_mensagem_confirmacao() == "Thank you for your order!"
+
+    def test_checkout_sem_preencher_dados(self, driver):
+        login_page = LoginPage(driver)
+        inventory_page = InventoryPage(driver)
+        cart_page = CartPage(driver)
+        checkout_page = CheckoutPage(driver)
+
+        wait = WebDriverWait(driver, 40)
+
+        login_page.abrir()
+        login_page.fazer_login("standard_user", "secret_sauce")
+        wait.until(EC.url_contains("inventory"))
+
+        inventory_page.adicionar_produto_ao_carrinho()
+        inventory_page.ir_para_carrinho()
+
+        wait.until(EC.url_contains("cart"))
+
+        cart_page.ir_para_checkout()
+        wait.until(EC.url_contains("checkout-step-one"))
+
+        checkout_page.clicar_continuar_sem_dados()
+
+        erro = checkout_page.obter_erro_formulario()
+        assert "First Name is required" in erro
