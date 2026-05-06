@@ -21,22 +21,26 @@ Projeto de automação de testes em Python com dois módulos independentes: test
 
 ```
 ├── automacao-api/
-│   ├── base/          
-│   ├── payloads/      
+│   ├── base/
+│   ├── payloads/
+│   │   ├── pet_payload.py
+│   │   ├── store_payload.py
+│   │   └── user_payload.py
 │   └── tests/
 │       ├── test_pet.py
 │       ├── test_store.py
 │       └── test_user.py
 ├── automacao-web/
-│   ├── pages/         
+│   ├── pages/
 │   │   ├── login_page.py
 │   │   ├── inventory_page.py
 │   │   ├── cart_page.py
 │   │   └── checkout_page.py
 │   ├── utils/
-│   │   └── driver.py 
+│   │   └── driver.py
 │   └── tests/
 │       └── test_e2e_compra.py
+├── assets/
 ├── .github/workflows/
 │   └── ci.yml
 └── requirements.txt
